@@ -1,0 +1,58 @@
+Mount Google Drive
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+Install Required Libraries
+
+!pip install pytube
+
+Download YouTube Playlist
+
+from pytube import Playlist, YouTube
+import os
+
+Set Up the Playlist URL and Destination Path
+
+playlist_url = 'youtube playlist link paste there'
+destination = '/content/drive/My Drive/YoutubeDownloads'
+
+Create Destination Folder If It Doesn't Exist
+
+if not os.path.exists(destination):
+    os.makedirs(destination)
+
+
+Function to Download Video with Specified Resolution
+
+
+def download_video(video_url, resolution='1080p'): 
+    yt = YouTube(video_url)
+    video = yt.streams.filter(res=resolution, file_extension='mp4').first()
+    
+    if video:
+        print(f"Downloading {yt.title} in {resolution} resolution...")
+        video.download(destination)
+        print(f"Downloaded {yt.title}")
+    else:
+        print(f"Resolution {resolution} not available for {yt.title}, downloading the highest resolution available.")
+        video = yt.streams.get_highest_resolution()
+        video.download(destination)
+        print(f"Downloaded {yt.title} in highest available resolution.")
+
+
+Playlist and Download Videos
+
+playlist = Playlist(playlist_url)
+
+print(f"Total videos in playlist: {len(playlist.video_urls)}")
+
+# Choose the desired resolution
+desired_resolution = '720p'
+
+for video_url in playlist.video_urls:
+    download_video(video_url, resolution=desired_resolution)
+
+
+
+
